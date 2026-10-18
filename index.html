@@ -1,0 +1,141 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ScamCheck Hub | Stay Safe Online</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f7fb;
+      color: #172033;
+    }
+    header {
+      background: #102a43;
+      color: white;
+      padding: 22px 8%;
+    }
+    header h2 { margin: 0; }
+    .hero {
+      text-align: center;
+      padding: 65px 20px 45px;
+    }
+    .hero h1 {
+      font-size: 42px;
+      margin-bottom: 15px;
+    }
+    .hero p {
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.7;
+      color: #526477;
+    }
+    .panel {
+      background: white;
+      max-width: 650px;
+      margin: 0 auto 60px;
+      padding: 28px;
+      border-radius: 14px;
+      box-shadow: 0 5px 25px #102a4312;
+    }
+    h3 { margin-top: 0; }
+    textarea, input, button {
+      width: 100%;
+      padding: 13px;
+      margin: 10px 0;
+      border-radius: 8px;
+      font-size: 15px;
+    }
+    textarea, input { border: 1px solid #ccd6e0; }
+    button {
+      border: 0;
+      background: #087f8c;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover { background: #066873; }
+    #preview {
+      display: none;
+      max-width: 100%;
+      max-height: 250px;
+      margin: 15px auto;
+      border-radius: 8px;
+    }
+    .notice {
+      background: #fff8e6;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    footer {
+      text-align: center;
+      padding: 22px;
+      color: #65758b;
+    }
+    @media (max-width: 500px) {
+      .hero h1 { font-size: 32px; }
+      .panel { margin: 0 12px 40px; padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h2>🛡️ ScamCheck Hub</h2>
+  </header>
+
+  <section class="hero">
+    <h1>Stay Safe. Spot Scams.</h1>
+    <p>Helping you make safer decisions online. Check suspicious messages and prepare to investigate potentially fake profiles.</p>
+  </section>
+
+  <main class="panel">
+    <h3>Check a Suspicious Message</h3>
+    <textarea id="message" rows="5" placeholder="Paste a suspicious message here..."></textarea>
+    <button onclick="checkMessage()">Review Message</button>
+    <p id="result" aria-live="polite"></p>
+
+    <hr>
+
+    <h3>Check a Profile Picture</h3>
+    <p>Choose a picture you want to investigate.</p>
+    <input type="file" id="photo" accept="image/*">
+    <img id="preview" alt="Selected picture preview">
+    <p class="notice">Picture preview only: reverse-image searching is not connected yet. Your selection is not uploaded or searched by this demo.</p>
+  </main>
+
+  <footer>© 2026 ScamCheck Hub. Think before you trust.</footer>
+
+  <script>
+    function checkMessage() {
+      const message = document.getElementById("message").value.trim();
+      const result = document.getElementById("result");
+
+      if (!message) {
+        result.textContent = "Please paste a message first.";
+        return;
+      }
+
+      result.textContent =
+        "Demo only: no real scam analysis has been performed. Never send money or share verification codes with someone you do not trust.";
+    }
+
+    document.getElementById("photo").addEventListener("change", function(event) {
+      const file = event.target.files[0];
+      const preview = document.getElementById("preview");
+
+      if (file && file.type.startsWith("image/")) {
+        preview.src = URL.createObjectURL(file);
+        preview.style.display = "block";
+      } else {
+        preview.style.display = "none";
+        preview.removeAttribute("src");
+      }
+    });
+  </script>
+</body>
+</html>
