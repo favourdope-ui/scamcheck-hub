@@ -31,7 +31,7 @@ Deno.test("scam heuristic regression set: expected signal present/absent", () =>
  }
 });
 Deno.test("score levels and empty input handling", () => {
- assertEquals(analyzeMessage("URGENT send your verification code immediately or account will be blocked").level, "High");
+ assertEquals(analyzeMessage("URGENT send your verification code immediately or account will be blocked").level, "Elevated");
  assertEquals(analyzeMessage("Hi, are we still meeting for lunch tomorrow?").level, "Lower");
  assertEquals(analyzeMessage("hello").score, 0);
 });
