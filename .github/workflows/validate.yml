@@ -28,9 +28,9 @@ jobs:
 
           html = Path("index.html").read_text(encoding="utf-8")
           required = [
-              'id="message"', 'id="checkBtn"', 'id="reportForm"',
+              'id="message"', 'id="checkBtn"', 'id="reportForm"', 'id="emailSignupForm"',
               'function analyzeMessage', 'api("checks"',
-              'api("scam_reports"', 'status=eq.published',
+              'api("scam_reports"', 'email_registrations?on_conflict=email', 'status=eq.published',
               '/functions/v1/analyze-message', 'privacy.html', 'terms.html'
           ]
           missing = [item for item in required if item not in html]
@@ -43,6 +43,12 @@ jobs:
           for page in ["privacy.html", "terms.html"]:
               if not Path(page).exists():
                   raise SystemExit("Required public policy page is missing: " + page)
+          signup_migration = Path("supabase/migrations/20261029010000_email_registrations.sql")
+          if not signup_migration.exists():
+              raise SystemExit("Email registration migration is missing")
+          migration_text = signup_migration.read_text(encoding="utf-8")
+          if "create table if not exists public.email_registrations" not in migration_text or "enable row level security" not in migration_text:
+              raise SystemExit("Email registration schema or RLS is missing")
           function_file = Path("supabase/functions/analyze-message/index.ts")
           if not function_file.exists():
               raise SystemExit("Supabase analyze-message Edge Function source is missing")
