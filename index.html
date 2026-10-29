@@ -21,7 +21,7 @@
 <label for="message">Suspicious message</label><textarea id="message" maxlength="12000" placeholder="Paste the message here. Remove private details first."></textarea>
 <div class="actions"><button id="checkBtn" type="button">Check warning signs</button><button id="clearBtn" class="secondary" type="button">Clear text</button></div>
 <div id="analysisResult" class="result" aria-live="polite"></div>
-<div id="saveStatus" class="status hidden" aria-live="polite"></div>
+<div id="saveStatus" class="status hidden" aria-live="polite"></div>\n<div class="divider"></div><h3>Recent checks on this device</h3><p class="muted">Only the score, warning labels, time, and a one-way fingerprint are stored in this browser. The original message is not saved here.</p><div id="localHistory" class="report-list"><div class="status">Your recent checks will appear here.</div></div>
 </div>
 <div id="picturePane" class="hidden">
 <h2>Inspect a profile picture</h2><p class="muted">Choose an image to preview and create a privacy-preserving local fingerprint. This does not identify a person or prove a profile is fake.</p>
@@ -72,6 +72,9 @@ function analyzeMessage(raw){
  if(!findings.length)findings.push({title:"No common warning pattern detected",detail:"This simple check did not match its known rules. Scams can look normal, so verify the sender and request independently."});
  return {score,level,findings,method:"rule-based",checkedAt:new Date().toISOString()};
 }
+function renderHistory(){const root=$("localHistory");try{const items=JSON.parse(localStorage.getItem("scamcheck_history_v1")||"[]");if(!items.length){root.innerHTML='<div class="status">No checks saved on this device yet.</div>';return}root.innerHTML=items.map(item=>'<article class="report-item"><strong>'+escapeHtml(item.level)+' warning-sign level · '+Number(item.score)+'/100</strong><span class="tag">'+escapeHtml(item.findings.slice(0,3).join(", ")||"No matched warning patterns")+'</span><p class="muted">'+escapeHtml(new Date(item.at).toLocaleString())+'</p></article>').join("")}catch{root.innerHTML='<div class="status">Local history is unavailable in this browser.</div>'}}
+function saveHistory(item){try{const items=JSON.parse(localStorage.getItem("scamcheck_history_v1")||"[]");items.unshift(item);localStorage.setItem("scamcheck_history_v1",JSON.stringify(items.slice(0,10)));renderHistory()}catch{}}
+renderHistory();
 $("checkBtn").onclick=async()=>{
  const message=$("message").value.trim();if(!message){$("message").focus();return}
  if(message.length>12000)return;
@@ -79,7 +82,7 @@ $("checkBtn").onclick=async()=>{
  const analysis=analyzeMessage(message);const panel=$("analysisResult");panel.className="result show";
  const tone=analysis.score>=55?"high":analysis.score>=25?"medium":"low";
  panel.innerHTML='<div class="scoreline"><div class="score '+tone+'">'+analysis.score+'/100</div><div><h3>'+analysis.level+' warning-sign level</h3><div class="muted">Rule-based estimate · not a verified verdict</div></div></div><h3>What stood out</h3><ul class="checks">'+analysis.findings.map(f=>'<li><strong>'+escapeHtml(f.title)+':</strong> '+escapeHtml(f.detail)+'</li>').join("")+'</ul><div class="disclaimer">A low score does not mean a message is safe. This checker uses text patterns, not a trained AI model or live threat database.</div>';
- try{const hash=await sha256(message);await api("checks",{method:"POST",body:JSON.stringify({user_id:null,input_type:"message",input_hash:hash,risk_score:analysis.score,risk_level:analysis.level.toLowerCase(),result:{findings:analysis.findings.map(f=>({title:f.title,detail:f.detail})),method:analysis.method,version:1}})});status($("saveStatus"),"Check completed and a privacy-preserving record was saved.","good")}
+ try{const hash=await sha256(message);saveHistory({score:analysis.score,level:analysis.level,findings:analysis.findings.map(f=>f.title),at:analysis.checkedAt,hash});await api("checks",{method:"POST",body:JSON.stringify({user_id:null,input_type:"message",input_hash:hash,risk_score:analysis.score,risk_level:analysis.level.toLowerCase(),result:{findings:analysis.findings.map(f=>({title:f.title,detail:f.detail})),method:analysis.method,version:1}})});status($("saveStatus"),"Check completed and a privacy-preserving record was saved.","good")}
  catch(e){status($("saveStatus"),"Check completed, but saving did not work: "+e.message+" You can still use the guidance above.","error")}
  btn.disabled=false;btn.textContent="Check warning signs";
 };
