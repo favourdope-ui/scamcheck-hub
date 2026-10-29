@@ -30,7 +30,7 @@ jobs:
           required = [
               'id="message"', 'id="checkBtn"', 'id="reportForm"',
               'function analyzeMessage', 'api("checks"',
-              'api("scam_reports"', 'status=eq.approved',
+              'api("scam_reports"', 'status=eq.published',
               '/functions/v1/analyze-message'
           ]
           missing = [item for item in required if item not in html]
