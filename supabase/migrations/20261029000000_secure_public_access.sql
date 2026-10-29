@@ -28,7 +28,7 @@ CREATE POLICY "Public can submit pending scam reports" ON public.scam_reports
 CREATE POLICY "Users can submit own scam reports" ON public.scam_reports
   FOR INSERT TO authenticated WITH CHECK (status = 'pending' AND reporter_id = (select auth.uid()));
 CREATE POLICY "Public and owners can read visible scam reports" ON public.scam_reports
-  FOR SELECT TO anon, authenticated USING (status = 'approved' OR (select auth.uid()) = reporter_id);
+  FOR SELECT TO anon, authenticated USING (status = 'published' OR (select auth.uid()) = reporter_id);
 
 GRANT INSERT (title, target, description) ON public.scam_reports TO anon;
 GRANT INSERT (reporter_id, title, target, description) ON public.scam_reports TO authenticated;
