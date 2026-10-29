@@ -14,6 +14,17 @@
 <header><strong>🛡️ ScamCheck Hub</strong><span>Safer decisions start with a second look.</span></header>
 <section class="hero"><div class="eyebrow">Pause · Check · Protect</div><h1>Think before you trust.</h1><p>Check suspicious messages for common scam warning signs, learn what to do next, and report suspected scams for review.</p></section>
 <main class="wrap">
+<section class="card" id="emailSignupCard">
+<h2>Register your email</h2>
+<p class="muted">Join the ScamCheck Hub early-access list. This helps us count interested users and share important launch updates. Your email will not be shown publicly.</p>
+<form id="emailSignupForm">
+<label for="signupEmail">Email address</label>
+<input id="signupEmail" name="email" type="email" maxlength="254" autocomplete="email" required placeholder="you@example.com">
+<div class="actions"><button id="signupEmailBtn" type="submit">Register email</button></div>
+<div id="emailSignupStatus" class="status hidden" aria-live="polite"></div>
+</form>
+<p class="muted">This is an email registration list, not yet a password-based account. Only enter an email address you are authorised to use.</p>
+</section>
 <section class="card">
 <div class="tabs" role="tablist"><button class="tab active" id="messageTab" type="button">Message checker</button><button class="tab" id="pictureTab" type="button">Profile picture</button><button class="tab" id="reportTab" type="button">Report a scam</button></div>
 <div id="messagePane">
@@ -72,6 +83,20 @@ function analyzeMessage(raw){
  if(!findings.length)findings.push({title:"No common warning pattern detected",detail:"This simple check did not match its known rules. Scams can look normal, so verify the sender and request independently."});
  return {score,level,findings,method:"rule-based",checkedAt:new Date().toISOString()};
 }
+$("emailSignupForm").addEventListener("submit",async e=>{
+ e.preventDefault();
+ const btn=$("signupEmailBtn");
+ const email=$("signupEmail").value.trim().toLowerCase();
+ if(!email)return;
+ btn.disabled=true;btn.textContent="Registering…";
+ try{
+  await api("email_registrations?on_conflict=email",{method:"POST",headers:{Prefer:"resolution=ignore-duplicates,return=minimal"},body:JSON.stringify({email})});
+  status($("emailSignupStatus"),"Registration received. If this email was already registered, it remains on the list. Thanks for your interest!","good");
+  $("emailSignupForm").reset();
+ }catch(err){
+  status($("emailSignupStatus"),"We could not register this email right now. Please try again later.","error");
+ }finally{btn.disabled=false;btn.textContent="Register email"}
+});
 function renderHistory(){const root=$("localHistory");try{const items=JSON.parse(localStorage.getItem("scamcheck_history_v1")||"[]");if(!items.length){root.innerHTML='<div class="status">No checks saved on this device yet.</div>';return}root.innerHTML=items.map(item=>'<article class="report-item"><strong>'+escapeHtml(item.level)+' warning-sign level · '+Number(item.score)+'/100</strong><span class="tag">'+escapeHtml(item.findings.slice(0,3).join(", ")||"No matched warning patterns")+'</span><p class="muted">'+escapeHtml(new Date(item.at).toLocaleString())+'</p></article>').join("")}catch{root.innerHTML='<div class="status">Local history is unavailable in this browser.</div>'}}
 function saveHistory(item){try{const items=JSON.parse(localStorage.getItem("scamcheck_history_v1")||"[]");items.unshift(item);localStorage.setItem("scamcheck_history_v1",JSON.stringify(items.slice(0,10)));renderHistory()}catch{}}
 renderHistory();
