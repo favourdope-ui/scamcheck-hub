@@ -28,9 +28,9 @@ jobs:
 
           html = Path("index.html").read_text(encoding="utf-8")
           required = [
-              'id="message"', 'id="checkBtn"', 'id="reportForm"', 'id="emailSignupForm"',
+              'id="message"', 'id="checkBtn"', 'id="reportForm"', 'id="emailSignupForm"', 'id="authForm"', 'id="postForm"', 'id="imageReferenceForm"',
               'function analyzeMessage', 'api("checks"',
-              'api("scam_reports"', 'email_registrations?on_conflict=email', 'status=eq.published',
+              'api("scam_reports"', 'email_registrations?on_conflict=email', 'status=eq.published', 'community_posts?select=id,author_id,author_name,body,created_at', 'post_comments', 'post_likes', 'image_signatures?select=id,image_hash,label,notes,created_at',
               '/functions/v1/analyze-message', 'privacy.html', 'terms.html'
           ]
           missing = [item for item in required if item not in html]
@@ -53,10 +53,17 @@ jobs:
           if not function_file.exists():
               raise SystemExit("Supabase analyze-message Edge Function source is missing")
           function = function_file.read_text(encoding="utf-8")
-          for required_text in ["function analyzeMessage", "12,000 characters", "Access-Control-Allow-Origin"]:
+          for required_text in ['import { analyzeMessage } from "./rules.ts"', "12,000 characters", "Access-Control-Allow-Origin"]:
               if required_text not in function:
                   raise SystemExit("Edge Function is missing: " + required_text)
+          rules_file = Path("supabase/functions/analyze-message/rules.ts")
+          test_file = Path("supabase/functions/analyze-message/rules_test.ts")
+          if not rules_file.exists() or not test_file.exists():
+              raise SystemExit("Scam detection rules or regression tests are missing")
+          migration = Path("supabase/migrations/20261029020000_community_features.sql")
+          if not migration.exists():
+              raise SystemExit("Community features migration is missing")
           print("Required app and backend features found.")
           PY
           node --check /tmp/scamcheck-app.js
-          deno check supabase/functions/analyze-message/index.ts
+          deno check supabase/functions/analyze-message/index.ts\n          deno test supabase/functions/analyze-message/rules_test.ts
