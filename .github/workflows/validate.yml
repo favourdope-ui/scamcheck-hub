@@ -1,0 +1,40 @@
+name: Validate ScamCheck Hub
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Validate page structure and JavaScript syntax
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          html = Path("index.html").read_text(encoding="utf-8")
+          required = [
+              'id="message"', 'id="checkBtn"', 'id="reportForm"',
+              'function analyzeMessage', 'api("checks"',
+              'api("scam_reports"', 'status=eq.approved'
+          ]
+          missing = [item for item in required if item not in html]
+          if missing:
+              raise SystemExit("Missing required app features: " + ", ".join(missing))
+          scripts = re.findall(r"<script>(.*?)</script>", html, re.S)
+          if not scripts:
+              raise SystemExit("No inline application script found")
+          Path("/tmp/scamcheck-app.js").write_text("\n".join(scripts), encoding="utf-8")
+          print("Required app features found.")
+          PY
+          node --check /tmp/scamcheck-app.js
