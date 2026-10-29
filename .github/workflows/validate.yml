@@ -30,7 +30,7 @@ jobs:
           required = [
               'id="message"', 'id="checkBtn"', 'id="reportForm"', 'id="emailSignupForm"', 'id="authForm"', 'id="postForm"', 'id="imageReferenceForm"',
               'function analyzeMessage', 'api("checks"',
-              'api("scam_reports"', 'email_registrations?on_conflict=email', 'status=eq.published', 'community_posts?select=id,author_id,author_name,body,created_at', 'post_comments', 'post_likes', 'image_signatures?select=id,image_hash,label,notes,created_at',
+              'api("scam_reports"', 'email_registrations?on_conflict=email', 'status=eq.published', 'community_posts?select=id,author_id,author_name,body,created_at,like_count', 'post_comments', 'post_likes', 'image_signatures?select=id,image_hash,label,notes,created_at',
               '/functions/v1/analyze-message', 'privacy.html', 'terms.html'
           ]
           missing = [item for item in required if item not in html]
