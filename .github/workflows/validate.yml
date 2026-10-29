@@ -31,7 +31,7 @@ jobs:
               'id="message"', 'id="checkBtn"', 'id="reportForm"',
               'function analyzeMessage', 'api("checks"',
               'api("scam_reports"', 'status=eq.published',
-              '/functions/v1/analyze-message'
+              '/functions/v1/analyze-message', 'privacy.html', 'terms.html'
           ]
           missing = [item for item in required if item not in html]
           if missing:
@@ -40,7 +40,10 @@ jobs:
           if not scripts:
               raise SystemExit("No inline application script found")
           Path("/tmp/scamcheck-app.js").write_text("\n".join(scripts), encoding="utf-8")
-          for page in ["privacy.html", "terms.html"]:\n    if not Path(page).exists():\n        raise SystemExit("Required public policy page is missing: " + page)\n          function_file = Path("supabase/functions/analyze-message/index.ts")
+          for page in ["privacy.html", "terms.html"]:
+              if not Path(page).exists():
+                  raise SystemExit("Required public policy page is missing: " + page)
+          function_file = Path("supabase/functions/analyze-message/index.ts")
           if not function_file.exists():
               raise SystemExit("Supabase analyze-message Edge Function source is missing")
           function = function_file.read_text(encoding="utf-8")
