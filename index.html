@@ -1,141 +1,94 @@
-
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ScamCheck Hub | Stay Safe Online</title>
-  <style>
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f4f7fb;
-      color: #172033;
-    }
-    header {
-      background: #102a43;
-      color: white;
-      padding: 22px 8%;
-    }
-    header h2 { margin: 0; }
-    .hero {
-      text-align: center;
-      padding: 65px 20px 45px;
-    }
-    .hero h1 {
-      font-size: 42px;
-      margin-bottom: 15px;
-    }
-    .hero p {
-      max-width: 600px;
-      margin: 0 auto;
-      line-height: 1.7;
-      color: #526477;
-    }
-    .panel {
-      background: white;
-      max-width: 650px;
-      margin: 0 auto 60px;
-      padding: 28px;
-      border-radius: 14px;
-      box-shadow: 0 5px 25px #102a4312;
-    }
-    h3 { margin-top: 0; }
-    textarea, input, button {
-      width: 100%;
-      padding: 13px;
-      margin: 10px 0;
-      border-radius: 8px;
-      font-size: 15px;
-    }
-    textarea, input { border: 1px solid #ccd6e0; }
-    button {
-      border: 0;
-      background: #087f8c;
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    button:hover { background: #066873; }
-    #preview {
-      display: none;
-      max-width: 100%;
-      max-height: 250px;
-      margin: 15px auto;
-      border-radius: 8px;
-    }
-    .notice {
-      background: #fff8e6;
-      padding: 12px;
-      border-radius: 8px;
-      font-size: 13px;
-      line-height: 1.5;
-    }
-    footer {
-      text-align: center;
-      padding: 22px;
-      color: #65758b;
-    }
-    @media (max-width: 500px) {
-      .hero h1 { font-size: 32px; }
-      .panel { margin: 0 12px 40px; padding: 20px; }
-    }
-  </style>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b1730">
+<meta name="description" content="ScamCheck Hub helps you spot warning signs in suspicious messages and report suspected scams.">
+<title>ScamCheck Hub — Think before you trust</title>
+<style>
+:root{--navy:#0b1730;--navy2:#142747;--teal:#12b8a6;--ink:#17243b;--muted:#65748b;--line:#e1e7ef;--paper:#f4f7fb;--white:#fff;--red:#b42318;--amber:#9a6700;--green:#067647}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.55 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}header{background:var(--navy);color:#fff;padding:18px max(20px,calc((100% - 1080px)/2));display:flex;align-items:center;justify-content:space-between;gap:16px}header strong{font-size:20px;letter-spacing:-.4px}header span{color:#b9c7dc;font-size:13px}.hero{background:linear-gradient(135deg,#0b1730,#193a5b);color:#fff;padding:58px 20px 72px;text-align:center}.hero .eyebrow{color:#7be5d9;text-transform:uppercase;letter-spacing:2px;font-size:12px;font-weight:800}.hero h1{font-size:clamp(34px,5vw,54px);line-height:1.08;letter-spacing:-1.8px;margin:13px 0}.hero p{color:#d3deed;max-width:640px;margin:0 auto}.wrap{width:min(100% - 28px,1000px);margin:-30px auto 60px;position:relative}.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:clamp(18px,4vw,30px);box-shadow:0 12px 38px #102a4310;margin-bottom:18px}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px}.tab{width:auto;margin:0;padding:10px 14px;background:#edf2f8;color:#30435f}.tab.active{background:var(--navy);color:#fff}h2{font-size:23px;letter-spacing:-.5px;margin:0 0 7px}h3{margin:0 0 8px}p{margin-top:6px}.muted{color:var(--muted);font-size:14px}label{display:block;font-size:14px;font-weight:700;margin:14px 0 6px}textarea,input,select{font:inherit;width:100%;padding:13px 14px;border:1px solid #cdd7e4;border-radius:10px;background:#fff;color:var(--ink)}textarea{resize:vertical;min-height:145px}input:focus,textarea:focus{outline:3px solid #12b8a633;border-color:var(--teal)}button{font:inherit;font-weight:750;border:0;border-radius:10px;padding:12px 17px;background:var(--teal);color:#052b32;cursor:pointer}button:hover{filter:brightness(.96)}button:disabled{opacity:.55;cursor:wait}.secondary{background:#edf2f8;color:#243852}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.actions button{flex:1;min-width:160px}.status{margin-top:14px;padding:12px 14px;border-radius:10px;background:#eef3f8;color:#30435f;font-size:14px;overflow-wrap:anywhere}.status.error{background:#fff0ef;color:var(--red)}.status.good{background:#eaf8f0;color:var(--green)}.result{display:none;border:1px solid var(--line);border-radius:14px;margin-top:20px;padding:20px}.result.show{display:block}.scoreline{display:flex;align-items:center;gap:14px;margin-bottom:14px}.score{width:65px;height:65px;border-radius:16px;display:grid;place-items:center;background:#fff0ef;color:var(--red);font-weight:850;font-size:20px;flex-shrink:0}.score.low{background:#eaf8f0;color:var(--green)}.score.medium{background:#fff5dc;color:var(--amber)}.tag{display:inline-block;border-radius:100px;padding:4px 9px;font-size:12px;font-weight:800;background:#edf2f8;margin:3px 4px 3px 0}.checks{padding-left:20px}.checks li{margin:7px 0}.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.hidden{display:none!important}.preview{max-width:100%;max-height:230px;display:block;margin:12px auto;border-radius:12px}.report-list{display:grid;gap:10px}.report-item{padding:13px;border:1px solid var(--line);border-radius:10px}.report-item strong{display:block}.disclaimer{background:#fff7e6;border:1px solid #f5dda4;border-radius:10px;padding:12px 14px;color:#684c08;font-size:13px}.divider{height:1px;background:var(--line);margin:24px 0}footer{text-align:center;padding:22px;color:var(--muted);font-size:13px}@media(max-width:620px){header span{display:none}.grid{grid-template-columns:1fr}.hero{padding:48px 18px 62px}.actions button{min-width:100%}}
+</style>
 </head>
 <body>
-  <header>
-    <h2>🛡️ ScamCheck Hub</h2>
-  </header>
-
-  <section class="hero">
-    <h1>Stay Safe. Spot Scams.</h1>
-    <p>Helping you make safer decisions online. Check suspicious messages and prepare to investigate potentially fake profiles.</p>
-  </section>
-
-  <main class="panel">
-    <h3>Check a Suspicious Message</h3>
-    <textarea id="message" rows="5" placeholder="Paste a suspicious message here..."></textarea>
-    <button onclick="checkMessage()">Review Message</button>
-    <p id="result" aria-live="polite"></p>
-
-    <hr>
-
-    <h3>Check a Profile Picture</h3>
-    <p>Choose a picture you want to investigate.</p>
-    <input type="file" id="photo" accept="image/*">
-    <img id="preview" alt="Selected picture preview">
-    <p class="notice">Picture preview only: reverse-image searching is not connected yet. Your selection is not uploaded or searched by this demo.</p>
-  </main>
-
-  <footer>© 2026 ScamCheck Hub. Think before you trust.</footer>
-
-  <script>
-    function checkMessage() {
-      const message = document.getElementById("message").value.trim();
-      const result = document.getElementById("result");
-
-      if (!message) {
-        result.textContent = "Please paste a message first.";
-        return;
-      }
-
-      result.textContent =
-        "Demo only: no real scam analysis has been performed. Never send money or share verification codes with someone you do not trust.";
-    }
-
-    document.getElementById("photo").addEventListener("change", function(event) {
-      const file = event.target.files[0];
-      const preview = document.getElementById("preview");
-
-      if (file && file.type.startsWith("image/")) {
-        preview.src = URL.createObjectURL(file);
-        preview.style.display = "block";
-      } else {
-        preview.style.display = "none";
-        preview.removeAttribute("src");
-      }
-    });
-  </script>
-</body>
-</html>
+<header><strong>🛡️ ScamCheck Hub</strong><span>Safer decisions start with a second look.</span></header>
+<section class="hero"><div class="eyebrow">Pause · Check · Protect</div><h1>Think before you trust.</h1><p>Check suspicious messages for common scam warning signs, learn what to do next, and report suspected scams for review.</p></section>
+<main class="wrap">
+<section class="card">
+<div class="tabs" role="tablist"><button class="tab active" id="messageTab" type="button">Message checker</button><button class="tab" id="pictureTab" type="button">Profile picture</button><button class="tab" id="reportTab" type="button">Report a scam</button></div>
+<div id="messagePane">
+<h2>Check a suspicious message</h2><p class="muted">Paste the message, email, or chat text. The first check uses transparent warning-sign rules, not an AI verdict.</p>
+<label for="message">Suspicious message</label><textarea id="message" maxlength="12000" placeholder="Paste the message here. Remove private details first."></textarea>
+<div class="actions"><button id="checkBtn" type="button">Check warning signs</button><button id="clearBtn" class="secondary" type="button">Clear text</button></div>
+<div id="analysisResult" class="result" aria-live="polite"></div>
+<div id="saveStatus" class="status hidden" aria-live="polite"></div>
+</div>
+<div id="picturePane" class="hidden">
+<h2>Inspect a profile picture</h2><p class="muted">Choose an image to preview and create a privacy-preserving local fingerprint. This does not identify a person or prove a profile is fake.</p>
+<label for="photo">Choose an image</label><input id="photo" type="file" accept="image/jpeg,image/png,image/webp,image/gif">
+<img id="preview" class="preview hidden" alt="Selected image preview">
+<div id="imageDetails" class="status hidden"></div>
+<div class="disclaimer">Reverse-image searching and facial identity checks are not connected yet. Your image stays in this browser and is not uploaded.</div>
+</div>
+<div id="reportPane" class="hidden">
+<h2>Report a suspected scam</h2><p class="muted">Reports are saved as pending review. Please report behaviour and evidence, not guesses about someone's identity.</p>
+<form id="reportForm">
+<label for="reportTitle">Short title</label><input id="reportTitle" maxlength="100" required placeholder="e.g. Fake delivery fee message">
+<label for="reportTarget">Website, phone, username, or other target</label><input id="reportTarget" maxlength="240" required placeholder="Do not include passwords or verification codes">
+<label for="reportDescription">What happened?</label><textarea id="reportDescription" maxlength="3000" required placeholder="Describe the request, payment, or warning signs."></textarea>
+<div class="actions"><button id="submitReport" type="submit">Submit report for review</button></div><div id="reportStatus" class="status hidden" aria-live="polite"></div>
+</form>
+</div>
+</section>
+<section class="card"><h2>Recent community reports</h2><p class="muted">Only reports explicitly approved for publication appear here. No reports have been verified just because someone submitted them.</p><div id="communityReports" class="report-list"><div class="status">Loading published reports…</div></div></section>
+<section class="card"><h2>What to do if something feels wrong</h2><div class="grid"><div><h3>Stop and verify</h3><p class="muted">Contact the organisation through its official app or a number you find independently—not a link or number in the suspicious message.</p></div><div><h3>Protect your accounts</h3><p class="muted">Never share passwords, one-time codes, recovery phrases, or remote-access permissions with a stranger.</p></div><div><h3>Pause payments</h3><p class="muted">Be especially cautious with urgent transfers, gift cards, crypto, advance fees, or requests to keep a deal secret.</p></div><div><h3>Keep evidence</h3><p class="muted">Save relevant messages and transaction details securely. If money was sent, contact your bank or payment provider quickly.</p></div></div><div class="disclaimer">ScamCheck Hub provides preliminary educational guidance, not a guarantee, professional investigation, or proof that a person or message is genuine.</div></section>
+</main><footer>© 2026 ScamCheck Hub · Think before you trust.</footer>
+<script>
+const SUPABASE_URL = "https://ogagokwmckknzubidqmr.supabase.co";
+const SUPABASE_KEY = "sb_publishable_G-6kVJIgf-oP-JIAUUM2gw_TH8PdRog";
+const $ = id => document.getElementById(id);
+const panes = {message:"messagePane",picture:"picturePane",report:"reportPane"};
+function showPane(name){Object.entries(panes).forEach(([key,id])=>$(id).classList.toggle("hidden",key!==name));["message","picture","report"].forEach(key=>$(key+"Tab").classList.toggle("active",key===name));}
+$("messageTab").onclick=()=>showPane("message");$("pictureTab").onclick=()=>showPane("picture");$("reportTab").onclick=()=>showPane("report");
+function status(el,text,type=""){el.textContent=text;el.className="status"+(type?" "+type:"");el.classList.remove("hidden");}
+async function api(path,options={}){const response=await fetch(SUPABASE_URL+"/rest/v1/"+path,{...options,headers:{apikey:SUPABASE_KEY,Authorization:"Bearer "+SUPABASE_KEY,"Content-Type":"application/json",Prefer:"return=minimal",...(options.headers||{})}});if(!response.ok){let message="Database request failed ("+response.status+").";try{const data=await response.json();message=data.message||data.details||message}catch{}throw new Error(message)}return response}
+function analyzeMessage(raw){
+ const text=raw.toLowerCase();let score=0;const findings=[];
+ const rules=[
+  {points:24,regex:/\b(urgent|immediately|act now|within \d+ hours?|final warning|account will be (?:closed|suspended|blocked))\b/i,title:"Urgency or threat",detail:"Pressure to act quickly can stop you from checking whether a request is genuine."},
+  {points:30,regex:/\b(password|one[- ]time (?:password|code|passcode)|verification code|recovery phrase|seed phrase|pin number)\b/i,title:"Sensitive information requested",detail:"Legitimate support should not ask you to disclose a password, one-time code, or wallet recovery phrase."},
+  {points:26,regex:/\b(send|pay|transfer|deposit|wire|release fee|processing fee|activation fee)\b.{0,65}\b(money|payment|cash|fee|bitcoin|btc|crypto|usdt|gift card|wallet|account)\b|\b(money|payment|fee|bitcoin|btc|crypto|usdt|gift card)\b.{0,55}\b(send|pay|transfer|deposit|release|claim)\b/i,title:"Payment or advance-fee pressure",detail:"Check independently before paying an upfront fee or sending money, especially by crypto or gift card."},
+  {points:20,regex:/\b(prize|lottery|you have won|winner|free gift|giveaway|claim your reward|inheritance)\b/i,title:"Unexpected prize or reward",detail:"Unexpected winnings often lead to fake fees or requests for personal details."},
+  {points:18,regex:/\b(guaranteed profit|risk[- ]free investment|double your money|100% return|sure win|investment opportunity)\b/i,title:"Unrealistic financial promise",detail:"No legitimate investment can guarantee high returns without risk."},
+  {points:15,regex:/\b(keep (?:this|it) secret|don't tell anyone|do not tell anyone|act before anyone finds out)\b/i,title:"Secrecy pressure",detail:"A demand for secrecy can be used to isolate you from trusted advice."},
+  {points:12,regex:/\b(click (?:this|the) link|verify your account|login here|confirm your account|update your payment)\b/i,title:"Link or account-verification prompt",detail:"Do not sign in through a message link; visit the official website or app directly."},
+  {points:12,regex:/\b(remote access|install (?:this )?app|anydesk|teamviewer)\b/i,title:"Remote access request",detail:"Unexpected remote-access requests can give a stranger control of your device."}
+ ];
+ for(const r of rules)if(r.regex.test(text)){score+=r.points;findings.push(r)}
+ const urlCount=(raw.match(/https?:\/\/|www\./gi)||[]).length;
+ if(urlCount){score+=Math.min(12,urlCount*6);findings.push({title:"Link included",detail:"A link alone does not prove a scam, but inspect the domain carefully and avoid signing in from unsolicited messages."})}
+ score=Math.min(100,score);
+ const level=score>=55?"High":score>=25?"Elevated":"Lower";
+ if(!findings.length)findings.push({title:"No common warning pattern detected",detail:"This simple check did not match its known rules. Scams can look normal, so verify the sender and request independently."});
+ return {score,level,findings,method:"rule-based",checkedAt:new Date().toISOString()};
+}
+$("checkBtn").onclick=async()=>{
+ const message=$("message").value.trim();if(!message){$("message").focus();return}
+ if(message.length>12000)return;
+ const btn=$("checkBtn");btn.disabled=true;btn.textContent="Checking…";
+ const analysis=analyzeMessage(message);const panel=$("analysisResult");panel.className="result show";
+ const tone=analysis.score>=55?"high":analysis.score>=25?"medium":"low";
+ panel.innerHTML='<div class="scoreline"><div class="score '+tone+'">'+analysis.score+'/100</div><div><h3>'+analysis.level+' warning-sign level</h3><div class="muted">Rule-based estimate · not a verified verdict</div></div></div><h3>What stood out</h3><ul class="checks">'+analysis.findings.map(f=>'<li><strong>'+escapeHtml(f.title)+':</strong> '+escapeHtml(f.detail)+'</li>').join("")+'</ul><div class="disclaimer">A low score does not mean a message is safe. This checker uses text patterns, not a trained AI model or live threat database.</div>';
+ try{const hash=await sha256(message);await api("checks",{method:"POST",body:JSON.stringify({user_id:null,input_type:"message",input_hash:hash,risk_score:analysis.score,risk_level:analysis.level.toLowerCase(),result:{findings:analysis.findings.map(f=>({title:f.title,detail:f.detail})),method:analysis.method,version:1}})});status($("saveStatus"),"Check completed and a privacy-preserving record was saved.","good")}
+ catch(e){status($("saveStatus"),"Check completed, but saving did not work: "+e.message+" You can still use the guidance above.","error")}
+ btn.disabled=false;btn.textContent="Check warning signs";
+};
+$("clearBtn").onclick=()=>{$("message").value="";$("analysisResult").className="result";$("saveStatus").classList.add("hidden");$("message").focus()};
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+async function sha256(value){const bytes=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(value));return Array.from(new Uint8Array(bytes)).map(b=>b.toString(16).padStart(2,"0")).join("")}
+$("photo").addEventListener("change",async e=>{const file=e.target.files[0];$("preview").classList.add("hidden");$("imageDetails").classList.add("hidden");if(!file)return;if(!file.type.startsWith("image/")){status($("imageDetails"),"Please choose a valid image file.","error");return}if(file.size>8*1024*1024){status($("imageDetails"),"Please choose an image smaller than 8 MB.","error");return}const url=URL.createObjectURL(file);$("preview").src=url;$("preview").classList.remove("hidden");try{const hash=await sha256(await file.arrayBuffer());status($("imageDetails"),"Local image fingerprint created: "+hash.slice(0,20)+"… No image uploaded. A fingerprint cannot tell whether a person is genuine.");}catch{status($("imageDetails"),"Image preview ready. Fingerprinting is unavailable in this browser.")}});
+$("reportForm").addEventListener("submit",async e=>{e.preventDefault();const btn=$("submitReport");btn.disabled=true;btn.textContent="Submitting…";try{await api("scam_reports",{method:"POST",body:JSON.stringify({title:$("reportTitle").value.trim(),target:$("reportTarget").value.trim(),description:$("reportDescription").value.trim()})});status($("reportStatus"),"Report submitted for review. It is not publicly listed or treated as proven.","good");$("reportForm").reset()}catch(err){status($("reportStatus"),"Could not submit the report: "+err.message,"error")}finally{btn.disabled=false;btn.textContent="Submit report for review"}});
+async function loadReports(){try{const response=await api("scam_reports?select=id,title,target,description,created_at&status=eq.published&order=created_at.desc&limit=10",{headers:{Accept:"application/json",Prefer:""}});const reports=await response.json();const root=$("communityReports");if(!reports.length){root.innerHTML='<div class="status">No published reports yet. New submissions remain private until reviewed.</div>';return}root.innerHTML=reports.map(r=>'<article class="report-item"><strong>'+escapeHtml(r.title)+'</strong><span class="tag">Published</span><p class="muted">'+escapeHtml(r.target)+'</p><p>'+escapeHtml(r.description)+'</p></article>').join("")}catch(e){$("communityReports").innerHTML='<div class="status">Published reports could not be loaded right now.</div>'}}
+loadReports();
+</script>
+</body></html>
