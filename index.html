@@ -21,7 +21,7 @@
 <label for="message">Suspicious message</label><textarea id="message" maxlength="12000" placeholder="Paste the message here. Remove private details first."></textarea>
 <div class="actions"><button id="checkBtn" type="button">Check warning signs</button><button id="clearBtn" class="secondary" type="button">Clear text</button></div>
 <div id="analysisResult" class="result" aria-live="polite"></div>
-<div id="saveStatus" class="status hidden" aria-live="polite"></div>\n<div class="divider"></div><h3>Recent checks on this device</h3><p class="muted">Only the score, warning labels, time, and a one-way fingerprint are stored in this browser. The original message is not saved here.</p><div id="localHistory" class="report-list"><div class="status">Your recent checks will appear here.</div></div>
+<div id="saveStatus" class="status hidden" aria-live="polite"></div>\n<div class="divider"></div><div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap"><h3>Recent checks on this device</h3><button id="clearHistory" class="secondary" type="button">Clear local history</button></div><p class="muted">Only the score, warning labels, time, and a one-way fingerprint are stored in this browser. The original message is not saved here.</p><div id="localHistory" class="report-list"><div class="status">Your recent checks will appear here.</div></div>
 </div>
 <div id="picturePane" class="hidden">
 <h2>Inspect a profile picture</h2><p class="muted">Choose an image to preview and create a privacy-preserving local fingerprint. This does not identify a person or prove a profile is fake.</p>
@@ -75,6 +75,7 @@ function analyzeMessage(raw){
 function renderHistory(){const root=$("localHistory");try{const items=JSON.parse(localStorage.getItem("scamcheck_history_v1")||"[]");if(!items.length){root.innerHTML='<div class="status">No checks saved on this device yet.</div>';return}root.innerHTML=items.map(item=>'<article class="report-item"><strong>'+escapeHtml(item.level)+' warning-sign level · '+Number(item.score)+'/100</strong><span class="tag">'+escapeHtml(item.findings.slice(0,3).join(", ")||"No matched warning patterns")+'</span><p class="muted">'+escapeHtml(new Date(item.at).toLocaleString())+'</p></article>').join("")}catch{root.innerHTML='<div class="status">Local history is unavailable in this browser.</div>'}}
 function saveHistory(item){try{const items=JSON.parse(localStorage.getItem("scamcheck_history_v1")||"[]");items.unshift(item);localStorage.setItem("scamcheck_history_v1",JSON.stringify(items.slice(0,10)));renderHistory()}catch{}}
 renderHistory();
+$("clearHistory").onclick=()=>{try{localStorage.removeItem("scamcheck_history_v1");renderHistory()}catch{status($("saveStatus"),"Could not clear local history in this browser.","error")}};
 $("checkBtn").onclick=async()=>{
  const message=$("message").value.trim();if(!message){$("message").focus();return}
  if(message.length>12000)return;
