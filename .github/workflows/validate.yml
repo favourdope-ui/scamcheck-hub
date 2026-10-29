@@ -16,7 +16,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Validate page structure and JavaScript syntax
+      - name: Set up Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Validate app features and JavaScript syntax
         run: |
           python3 - <<'PY'
           from pathlib import Path
@@ -26,7 +30,8 @@ jobs:
           required = [
               'id="message"', 'id="checkBtn"', 'id="reportForm"',
               'function analyzeMessage', 'api("checks"',
-              'api("scam_reports"', 'status=eq.approved'
+              'api("scam_reports"', 'status=eq.approved',
+              '/functions/v1/analyze-message'
           ]
           missing = [item for item in required if item not in html]
           if missing:
@@ -35,6 +40,14 @@ jobs:
           if not scripts:
               raise SystemExit("No inline application script found")
           Path("/tmp/scamcheck-app.js").write_text("\n".join(scripts), encoding="utf-8")
-          print("Required app features found.")
+          function_file = Path("supabase/functions/analyze-message/index.ts")
+          if not function_file.exists():
+              raise SystemExit("Supabase analyze-message Edge Function source is missing")
+          function = function_file.read_text(encoding="utf-8")
+          for required_text in ["function analyzeMessage", "12,000 characters", "Access-Control-Allow-Origin"]:
+              if required_text not in function:
+                  raise SystemExit("Edge Function is missing: " + required_text)
+          print("Required app and backend features found.")
           PY
           node --check /tmp/scamcheck-app.js
+          deno check supabase/functions/analyze-message/index.ts
