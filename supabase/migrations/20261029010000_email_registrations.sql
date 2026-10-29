@@ -4,7 +4,7 @@ create table if not exists public.email_registrations (
   email text not null unique,
   created_at timestamptz not null default now(),
   constraint email_registrations_normalized check (email = lower(btrim(email))),
-  constraint email_registrations_valid_email check (email ~* '^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}$')
+  constraint email_registrations_valid_email check (email ~* '^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$')
 );
 
 alter table public.email_registrations enable row level security;
