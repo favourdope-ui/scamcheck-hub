@@ -66,4 +66,5 @@ jobs:
           print("Required app and backend features found.")
           PY
           node --check /tmp/scamcheck-app.js
-          deno check supabase/functions/analyze-message/index.ts\n          deno test supabase/functions/analyze-message/rules_test.ts
+          deno check supabase/functions/analyze-message/index.ts
+          deno test supabase/functions/analyze-message/rules_test.ts
