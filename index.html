@@ -17,7 +17,7 @@
 <section class="card">
 <div class="tabs" role="tablist"><button class="tab active" id="messageTab" type="button">Message checker</button><button class="tab" id="pictureTab" type="button">Profile picture</button><button class="tab" id="reportTab" type="button">Report a scam</button></div>
 <div id="messagePane">
-<h2>Check a suspicious message</h2><p class="muted">Paste the message, email, or chat text. The first check uses transparent warning-sign rules, not an AI verdict.</p>
+<h2>Check a suspicious message</h2><p class="muted">Paste the message, email, or chat text. The check uses transparent warning-sign rules, not an AI verdict. Text is sent to our secure backend for checking; the app saves the result and a one-way fingerprint, not the original message.</p>
 <label for="message">Suspicious message</label><textarea id="message" maxlength="12000" placeholder="Paste the message here. Remove private details first."></textarea>
 <div class="actions"><button id="checkBtn" type="button">Check warning signs</button><button id="clearBtn" class="secondary" type="button">Clear text</button></div>
 <div id="analysisResult" class="result" aria-live="polite"></div>
@@ -79,9 +79,9 @@ $("checkBtn").onclick=async()=>{
  const message=$("message").value.trim();if(!message){$("message").focus();return}
  if(message.length>12000)return;
  const btn=$("checkBtn");btn.disabled=true;btn.textContent="Checking…";
- const analysis=analyzeMessage(message);const panel=$("analysisResult");panel.className="result show";
+ let analysis;try{const response=await fetch(SUPABASE_URL+"/functions/v1/analyze-message",{method:"POST",headers:{apikey:SUPABASE_KEY,"Content-Type":"application/json"},body:JSON.stringify({message})});if(!response.ok){let info={};try{info=await response.json()}catch{}throw new Error(info.error||"Backend check unavailable ("+response.status+")")}analysis=await response.json()}catch(e){analysis=analyzeMessage(message);analysis.method="local-fallback"}const panel=$("analysisResult");panel.className="result show";
  const tone=analysis.score>=55?"high":analysis.score>=25?"medium":"low";
- panel.innerHTML='<div class="scoreline"><div class="score '+tone+'">'+analysis.score+'/100</div><div><h3>'+analysis.level+' warning-sign level</h3><div class="muted">Rule-based estimate · not a verified verdict</div></div></div><h3>What stood out</h3><ul class="checks">'+analysis.findings.map(f=>'<li><strong>'+escapeHtml(f.title)+':</strong> '+escapeHtml(f.detail)+'</li>').join("")+'</ul><div class="disclaimer">A low score does not mean a message is safe. This checker uses text patterns, not a trained AI model or live threat database.</div>';
+ panel.innerHTML='<div class="scoreline"><div class="score '+tone+'">'+analysis.score+'/100</div><div><h3>'+analysis.level+' warning-sign level</h3><div class="muted">Rule-based estimate · not a verified verdict · '+ (analysis.method === "server-side-rule-based" ? "server checked" : "local fallback") + '</div></div></div><h3>What stood out</h3><ul class="checks">'+analysis.findings.map(f=>'<li><strong>'+escapeHtml(f.title)+':</strong> '+escapeHtml(f.detail)+'</li>').join("")+'</ul><div class="disclaimer">A low score does not mean a message is safe. This checker uses text patterns, not a trained AI model or live threat database.</div>';
  try{const hash=await sha256(message);saveHistory({score:analysis.score,level:analysis.level,findings:analysis.findings.map(f=>f.title),at:analysis.checkedAt,hash});await api("checks",{method:"POST",body:JSON.stringify({user_id:null,input_type:"message",input_hash:hash,risk_score:analysis.score,risk_level:analysis.level.toLowerCase(),result:{findings:analysis.findings.map(f=>({title:f.title,detail:f.detail})),method:analysis.method,version:1}})});status($("saveStatus"),"Check completed and a privacy-preserving record was saved.","good")}
  catch(e){status($("saveStatus"),"Check completed, but saving did not work: "+e.message+" You can still use the guidance above.","error")}
  btn.disabled=false;btn.textContent="Check warning signs";
