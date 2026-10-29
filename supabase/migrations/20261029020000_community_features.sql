@@ -30,3 +30,14 @@ create index if not exists image_signatures_hash_idx on public.image_signatures(
 drop policy if exists "Community image signatures are searchable" on public.image_signatures; create policy "Community image signatures are searchable" on public.image_signatures for select to anon, authenticated using (true);
 drop policy if exists "Signed-in users add image signatures" on public.image_signatures; create policy "Signed-in users add image signatures" on public.image_signatures for insert to authenticated with check (true);
 revoke all on public.image_signatures from anon, authenticated; grant select (id,image_hash,label,notes,created_at) on public.image_signatures to anon, authenticated; grant insert (image_hash,label,notes) on public.image_signatures to authenticated;
+
+-- Use a protected counter rather than exposing individual users who liked a post.
+alter table public.community_posts add column if not exists like_count integer not null default 0 check (like_count >= 0);
+update public.community_posts p set like_count=(select count(*)::integer from public.post_likes l where l.post_id=p.id);
+create or replace function public.maintain_community_like_count() returns trigger language plpgsql security definer set search_path = '' as $$ begin if tg_op='INSERT' then update public.community_posts set like_count=like_count+1 where id=new.post_id; return new; elsif tg_op='DELETE' then update public.community_posts set like_count=greatest(0,like_count-1) where id=old.post_id; return old; end if; return null; end; $$;
+drop trigger if exists maintain_like_count_insert on public.post_likes; create trigger maintain_like_count_insert after insert on public.post_likes for each row execute function public.maintain_community_like_count();
+drop trigger if exists maintain_like_count_delete on public.post_likes; create trigger maintain_like_count_delete after delete on public.post_likes for each row execute function public.maintain_community_like_count();
+revoke all on function public.maintain_community_like_count() from public, anon, authenticated;
+revoke all on function public.community_post_like_counts(uuid[]) from public, anon, authenticated;
+revoke update on public.community_posts from authenticated;
+grant update (body) on public.community_posts to authenticated;
