@@ -11,7 +11,7 @@ const cases = [
  {name:"ordinary family message", text:"Hi, are we still meeting for lunch at 1 pm tomorrow?", flagged:false},
  {name:"ordinary work update", text:"The team meeting is moved to Thursday. Please review the attached agenda.", flagged:false},
  {name:"normal delivery status", text:"Your package was delivered to the reception desk this afternoon.", flagged:false},
- {name:"legitimate password advice", text:"Never share your password or verification code with anyone.", flagged:true},
+ {name:"legitimate password advice", text:"Never share your password or verification code with anyone.", flagged:false},
  {name:"normal invoice reminder", text:"Invoice 104 is due Friday. Please contact our accounts department with questions.", flagged:false},
  {name:"ordinary birthday wish", text:"Happy birthday! Wishing you a wonderful year ahead.", flagged:false},
  {name:"crypto investment pitch", text:"Send USDT to this wallet and receive 100% return tomorrow", flagged:true},
