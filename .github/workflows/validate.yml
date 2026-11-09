@@ -56,6 +56,13 @@ jobs:
           for required_text in ['import { analyzeMessage } from "./rules.ts"', "12,000 characters", "Access-Control-Allow-Origin"]:
               if required_text not in function:
                   raise SystemExit("Edge Function is missing: " + required_text)
+          reverse_file = Path("supabase/functions/reverse-image-search/index.ts")
+          if not reverse_file.exists():
+              raise SystemExit("Supabase reverse-image-search Edge Function source is missing")
+          reverse = reverse_file.read_text(encoding="utf-8")
+          for required_text in ["GOOGLE_CLOUD_VISION_API_KEY", "WEB_DETECTION", "Access-Control-Allow-Origin"]:
+              if required_text not in reverse:
+                  raise SystemExit("Reverse-image-search Edge Function is missing: " + required_text)
           rules_file = Path("supabase/functions/analyze-message/rules.ts")
           test_file = Path("supabase/functions/analyze-message/rules_test.ts")
           if not rules_file.exists() or not test_file.exists():
@@ -67,4 +74,5 @@ jobs:
           PY
           node --check /tmp/scamcheck-app.js
           deno check supabase/functions/analyze-message/index.ts
+          deno check supabase/functions/reverse-image-search/index.ts
           deno test supabase/functions/analyze-message/rules_test.ts
