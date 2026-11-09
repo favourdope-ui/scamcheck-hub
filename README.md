@@ -1,36 +1,47 @@
 # ScamCheck Hub
 
-ScamCheck Hub is an early-stage public beta that helps people notice common warning signs in suspicious messages and submit scam reports for moderator review.
+ScamCheck Hub is a public beta web application for checking suspicious messages, reporting suspected scams, and sharing community warnings.
 
-## Current features
+## Current application features
 
-- Responsive single-page web app deployed through Vercel.
-- Server-side rule-based message analysis through the Supabase Edge Function `analyze-message`.
-- Warning categories for urgency, requests for sensitive information, advance-fee pressure, unexpected prizes, unrealistic investment promises, secrecy, suspicious link prompts, and remote-access requests.
-- Check results saved to Supabase as a one-way SHA-256 input fingerprint, score, risk label, and findings when the database request succeeds.
-- Up to 10 recent check summaries stored locally in the visitor's browser; original messages are not placed in this local history.
-- Scam report submissions stored with status `pending`; only reports whose status is `published` can appear in the community list.
-- Local image preview and fingerprint only. The selected image is not uploaded.
-- Public Privacy Notice and Terms of Use pages.
-- GitHub Actions validation for the page's JavaScript, Edge Function TypeScript, and required files.
+- Responsive public website deployed through Vercel.
+- Email/password registration and sign-in through Supabase Auth, including password recovery.
+- Message checks using transparent server-side warning-sign rules.
+- Optional URL reputation checks through Google Web Risk when the server-side `GOOGLE_WEBRISK_API_KEY` is configured.
+- Check records store a one-way SHA-256 input fingerprint, score, risk label, and findings; the original message is not stored by the check record.
+- Scam report submissions are stored as pending review. Only reports marked published are intended to appear in the public reports list.
+- Community posts, comments, and likes for signed-in users.
+- Local image preview and perceptual fingerprint matching against the community reference set.
+- Wider-web reverse-image search through Google Cloud Vision Web Detection when `GOOGLE_CLOUD_VISION_API_KEY` is configured.
+- Public usage statistics. Accuracy is deliberately shown as “Not measured” until a defensible evaluation dataset exists.
+- Public Privacy Notice, Terms of Use, sitemap, and robots.txt.
 
 ## Production services
 
-- Web: Vercel project connected to the `main` branch.
-- Database and Edge Function: Supabase project `ogagokwmckknzubidqmr`.
-- Edge Function source: `supabase/functions/analyze-message/index.ts`.
-- Database policy source: `supabase/migrations/20261029000000_secure_public_access.sql`.
+- Web: Vercel project connected to the GitHub `main` branch.
+- Database, authentication, storage, and Edge Functions: Supabase project `ogagokwmckknzubidqmr`.
+- Message analysis: `supabase/functions/analyze-message/`.
+- Wider-web image search: `supabase/functions/reverse-image-search/`.
+- Database schema and policies: `supabase/migrations/`.
 
-The deployed Edge Function is public and accepts POST requests containing a `message` string of up to 12,000 characters. It uses deterministic rules, not a large language model or a live threat-intelligence feed.
+## Provider configuration
 
-## Deploy and validate
+The message checker always has its transparent rules-based fallback. Live URL reputation checks require the `GOOGLE_WEBRISK_API_KEY` Supabase Edge Function secret.
 
-The Vercel project automatically deploys changes pushed to `main`. GitHub Actions validates the page and Edge Function source on pushes and pull requests.
+Wider-web image search requires the `GOOGLE_CLOUD_VISION_API_KEY` Supabase Edge Function secret, plus Google Cloud Vision API activation and billing. A Gemini API key is not a substitute for either key.
 
-The SQL migration file documents the browser access policies applied to the connected Supabase project. The production migration was applied directly and verified with Supabase's security advisor.
+Provider keys must remain in server-side secrets. Never put them in `index.html`, public GitHub files, or browser storage.
 
-## Important limitations
+## Validation and deployment
 
-This is not yet a full commercial security product. There is no account system, account-synced history, live reverse-image search, trained AI model, external threat-intelligence feed, payment/subscription integration, or in-app moderation dashboard. There is no guarantee that a score is correct or that a message is safe. Do not submit passwords, verification codes, wallet recovery phrases, or other confidential data.
+GitHub Actions checks required UI features, JavaScript syntax, both Edge Function TypeScript entrypoints, and the scam-rule regression tests. Vercel deploys website changes from `main`. Supabase Edge Functions are deployed separately; the source files in this repository must be kept in sync with the deployed functions.
 
-Before a broader paid launch, add a verified support/contact channel, test the complete deployed flow from a real browser, establish abuse/rate controls and moderation operations, and review the privacy/terms pages for the operator's jurisdiction.
+## Not yet launch-complete
+
+- No payment processor, checkout flow, or working paid subscription management. The subscriptions table alone does not provide billing.
+- No in-app moderator/admin dashboard or complete report-review workflow.
+- No measured scam-detection accuracy claim or independently validated AI model. The current checker is rules-based, with optional URL reputation checks.
+- External provider checks remain unavailable until the required server-side provider keys and Google service configuration are activated.
+- Abuse prevention, rate limits, operational support, and end-to-end testing across real devices still need final verification.
+
+ScamCheck Hub provides warning signals, not proof that a message, account, image, or website is fraudulent or safe. Users should independently verify suspicious requests and should not submit passwords, one-time codes, wallet recovery phrases, or other confidential information.
