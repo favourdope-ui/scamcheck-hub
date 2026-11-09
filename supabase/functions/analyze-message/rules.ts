@@ -15,7 +15,7 @@ export function analyzeMessage(raw: string) {
     { points: 12, regex: /\b(remote access|install (?:this )?app|anydesk|teamviewer)\b/i, title: "Remote access request", detail: "Unexpected remote-access requests can give a stranger control of your device." },
   ];
   for (const rule of rules) {
-    if (rule.regex.test(text)) {
+    if (rule.regex.test(text) && !(rule.title === "Sensitive information requested" && protectiveAdvice)) {
       score += rule.points;
       findings.push({ title: rule.title, detail: rule.detail, points: rule.points });
     }
