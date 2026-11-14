@@ -12,6 +12,7 @@ ScamCheck Hub is a public beta web application for checking suspicious messages,
 - Scam report submissions are stored as pending review. Only reports marked published are intended to appear in the public reports list.
 - Community posts, comments, and likes for signed-in users.
 - Local image preview and perceptual fingerprint matching against the community reference set.
+- AI screenshot analysis through the Gemini 2.5 Flash multimodal model, returning visible details, evidence-based warning signs, a preliminary risk score, confidence, limitations, and recommended actions when `GEMINI_API_KEY` is configured.
 - Wider-web reverse-image search through Google Cloud Vision Web Detection when `GOOGLE_CLOUD_VISION_API_KEY` is configured.
 - Public usage statistics. Accuracy is deliberately shown as “Not measured” until a defensible evaluation dataset exists.
 - Public Privacy Notice, Terms of Use, sitemap, and robots.txt.
@@ -21,6 +22,7 @@ ScamCheck Hub is a public beta web application for checking suspicious messages,
 - Web: Vercel project connected to the GitHub `main` branch.
 - Database, authentication, storage, and Edge Functions: Supabase project `ogagokwmckknzubidqmr`.
 - Message analysis: `supabase/functions/analyze-message/`.
+- Multimodal screenshot analysis: `supabase/functions/analyze-image/`.
 - Wider-web image search: `supabase/functions/reverse-image-search/`.
 - Database schema and policies: `supabase/migrations/`.
 
@@ -28,7 +30,7 @@ ScamCheck Hub is a public beta web application for checking suspicious messages,
 
 The message checker always has its transparent rules-based fallback. Live URL reputation checks require the `GOOGLE_WEBRISK_API_KEY` Supabase Edge Function secret.
 
-Wider-web image search requires the `GOOGLE_CLOUD_VISION_API_KEY` Supabase Edge Function secret, plus Google Cloud Vision API activation and billing. A Gemini API key is not a substitute for either key.
+AI screenshot analysis requires the `GEMINI_API_KEY` Supabase Edge Function secret (a Gemini API key from Google AI Studio). Wider-web image search separately requires `GOOGLE_CLOUD_VISION_API_KEY`, plus Google Cloud Vision API activation and billing. These are separate services and keys.
 
 Provider keys must remain in server-side secrets. Never put them in `index.html`, public GitHub files, or browser storage.
 
@@ -40,7 +42,7 @@ GitHub Actions checks required UI features, JavaScript syntax, both Edge Functio
 
 - No payment processor, checkout flow, or working paid subscription management. The subscriptions table alone does not provide billing.
 - No in-app moderator/admin dashboard or complete report-review workflow.
-- No measured scam-detection accuracy claim or independently validated AI model. The current checker is rules-based, with optional URL reputation checks.
+- AI screenshot analysis is implemented as a deployed backend function, but it remains inactive until the secure `GEMINI_API_KEY` secret is configured and the live request is tested. The message checker remains rules-based; image AI results are preliminary and are not a validated accuracy claim.
 - External provider checks remain unavailable until the required server-side provider keys and Google service configuration are activated.
 - Abuse prevention, rate limits, operational support, and end-to-end testing across real devices still need final verification.
 
