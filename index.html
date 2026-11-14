@@ -63,7 +63,7 @@
 <p class="muted">This is an email registration list, not yet a password-based account. Only enter an email address you are authorised to use.</p>
 </section></div><div class="screen" id="toolsScreen"><section class="card"><div class="tabs" role="tablist"><button class="tab active" id="messageTab" type="button">Message checker</button><button class="tab" id="pictureTab" type="button">Profile picture</button><button class="tab" id="reportTab" type="button">Report a scam</button></div>
 <div id="messagePane">
-<h2>Check a suspicious message</h2><p class="muted">Paste the message, email, or chat text. The check uses transparent warning-sign rules, not an AI verdict. Text is sent to our secure backend for checking; the app saves the result and a one-way fingerprint, not the original message.</p>
+<h2>Check a suspicious message</h2><p class="muted">Paste the message, email, or chat text. When Gemini AI is enabled, ScamCheck analyses the wording and explains specific warning signs; transparent rules provide a fallback if AI is not configured or unavailable. Text is sent securely to the backend and may be processed by Google Gemini. The app saves the result and a one-way fingerprint, not the original message.</p>
 <label for="message">Suspicious message</label><textarea id="message" maxlength="12000" placeholder="Paste the message here. Remove private details first."></textarea>
 <div class="actions"><button id="checkBtn" type="button">Check message & live threat signals</button><button id="clearBtn" class="secondary" type="button">Clear text</button></div>
 <div id="analysisResult" class="result" aria-live="polite"></div>
