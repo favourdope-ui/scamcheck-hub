@@ -28,10 +28,10 @@ jobs:
 
           html = Path("index.html").read_text(encoding="utf-8")
           required = [
-              'id="message"', 'id="checkBtn"', 'id="reportForm"', 'id="emailSignupForm"', 'id="authForm"', 'id="postForm"', 'id="imageReferenceForm"',
+              'id="message"', 'id="checkBtn"', 'id="reportForm"', 'id="emailSignupForm"', 'id="authForm"', 'id="postForm"', 'id="imageReferenceForm"', 'id="aiImageAnalysisBtn"', 'id="aiImageAnalysisResults"',
               'function analyzeMessage', 'api("checks"',
               'api("scam_reports"', 'email_registrations?on_conflict=email', 'status=eq.published', 'community_posts?select=id,author_id,author_name,body,created_at,like_count', 'post_comments', 'post_likes', 'image_signatures?select=id,image_hash,label,notes,created_at',
-              '/functions/v1/analyze-message', 'privacy.html', 'terms.html'
+              '/functions/v1/analyze-message', '/functions/v1/analyze-image', 'privacy.html', 'terms.html'
           ]
           missing = [item for item in required if item not in html]
           if missing:
@@ -63,6 +63,13 @@ jobs:
           for required_text in ["GOOGLE_CLOUD_VISION_API_KEY", "WEB_DETECTION", "Access-Control-Allow-Origin"]:
               if required_text not in reverse:
                   raise SystemExit("Reverse-image-search Edge Function is missing: " + required_text)
+          image_file = Path("supabase/functions/analyze-image/index.ts")
+          if not image_file.exists():
+              raise SystemExit("Gemini multimodal image-analysis Edge Function source is missing")
+          image_function = image_file.read_text(encoding="utf-8")
+          for required_text in ["GEMINI_API_KEY", "gemini-2.5-flash", "inlineData", "riskScore"]:
+              if required_text not in image_function:
+                  raise SystemExit("AI image-analysis Edge Function is missing: " + required_text)
           rules_file = Path("supabase/functions/analyze-message/rules.ts")
           test_file = Path("supabase/functions/analyze-message/rules_test.ts")
           if not rules_file.exists() or not test_file.exists():
@@ -75,4 +82,5 @@ jobs:
           node --check /tmp/scamcheck-app.js
           deno check supabase/functions/analyze-message/index.ts
           deno check supabase/functions/reverse-image-search/index.ts
+          deno check supabase/functions/analyze-image/index.ts
           deno test supabase/functions/analyze-message/rules_test.ts
